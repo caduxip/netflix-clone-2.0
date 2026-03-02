@@ -5,53 +5,25 @@ const api_config = Object.freeze({
     genres: "https://api.themoviedb.org/3/genre/movie/list?",
     discover_movies: "https://api.themoviedb.org/3/discover/movie?"
   }
-});
+})
 
-const api_key = api_config.key;
-const img_url = api_config.image_base_url;
-const genres_list_http = api_config.endpoints.genres;
-const movie_genres_http = api_config.endpoints.discover_movies;
+async function fetch_movie_genres() {
+  const url = build_api_url(api_config.endpoints.genres)
+  const data = await request_json(url)
 
-function buildApiUrl(baseUrl, params) {
-  const search_params = new URLSearchParams({
-    api_key: api_config.key,
-    ...(params || {})
-  });
-
-  return `${baseUrl}${search_params}`;
+  return Array.isArray(data.genres) ? data.genres : []
 }
 
-async function requestJson(url) {
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
-  }
-
-  return response.json();
-}
-
-function getRandomPage(maxPage = 3) {
-  return Math.floor(Math.random() * maxPage) + 1;
-}
-
-async function fetchMovieGenres() {
-  const url = buildApiUrl(api_config.endpoints.genres);
-  const data = await requestJson(url);
-
-  return Array.isArray(data.genres) ? data.genres : [];
-}
-
-async function fetchMoviesByGenre(genreId, page = getRandomPage()) {
-  const url = buildApiUrl(api_config.endpoints.discover_movies, {
-    with_genres: genreId,
+async function fetch_movies_by_genre(genre_id, page = get_random_page()) {
+  const url = build_api_url(api_config.endpoints.discover_movies, {
+    with_genres: genre_id,
     page
-  });
-  const data = await requestJson(url);
+  })
+  const data = await request_json(url)
 
-  return Array.isArray(data.results) ? data.results : [];
+  return Array.isArray(data.results) ? data.results : []
 }
 
-function getMovieImageUrl(path) {
-  return path ? `${api_config.image_base_url}${path}` : "";
+function get_movie_image_url(path) {
+  return path ? `${api_config.image_base_url}${path}` : ""
 }
