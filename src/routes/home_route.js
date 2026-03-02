@@ -1,12 +1,14 @@
 import path from "path"
 import { fileURLToPath } from "url"
 
-const public_directory_path = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "public")
-const index_file_path = path.join(public_directory_path, "index.html")
+const currentFilePath = fileURLToPath(import.meta.url)
+const currentDirectory = path.dirname(currentFilePath)
+const publicDirectoryPath = path.join(currentDirectory, "..", "..", "public")
+const indexFilePath = path.join(publicDirectoryPath, "index.html")
 
 function register_home_route(app) {
   app.get("/", (_request, response) => {
-    response.sendFile(index_file_path)
+    response.sendFile(indexFilePath)
   })
 }
 

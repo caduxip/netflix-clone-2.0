@@ -1,11 +1,11 @@
-import create_app from "./app.js"
+import createApp from "./app.js"
 
-const port = Number(process.env.PORT) || 3333
+const serverPort = Number(process.env.PORT) || 3333
 
-function start_server() {
-  create_app().listen(port, () => {
-    console.log(`Server start up on port ${port}!`)
+function startServer() {
+  createApp().listen(serverPort, () => {
+    console.log(`Server started on port ${serverPort}`)
   })
 }
 
-start_server()
+startServer()

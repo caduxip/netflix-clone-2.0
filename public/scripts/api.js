@@ -1,20 +1,22 @@
-const api_config = Object.freeze({
-  key: "d19a1946970f98fae002af7545322879",
-  image_base_url: "https://image.tmdb.org/t/p/w500",
+const apiConfig = Object.freeze({
+  apiKey: "d19a1946970f98fae002af7545322879",
+  imageBaseUrl: "https://image.tmdb.org/t/p/w500",
   endpoints: {
     genres: "https://api.themoviedb.org/3/genre/movie/list?",
-    discover_movies: "https://api.themoviedb.org/3/discover/movie?"
+    discoverMovies: "https://api.themoviedb.org/3/discover/movie?"
   }
 })
 
-function build_api_url(base_url, params = {}) {
-  return `${base_url}${new URLSearchParams({
-    api_key: api_config.key,
+const maxDiscoveryPage = 3
+
+function buildApiUrl(baseUrl, params = {}) {
+  return `${baseUrl}${new URLSearchParams({
+    api_key: apiConfig.apiKey,
     ...params
   })}`
 }
 
-async function request_json(url) {
+async function fetchJson(url) {
   const response = await fetch(url)
 
   if (!response.ok) {
@@ -24,21 +26,27 @@ async function request_json(url) {
   return response.json()
 }
 
-async function fetch_movie_genres() {
-  const data = await request_json(build_api_url(api_config.endpoints.genres))
+function pickRandomPage(maxPage = maxDiscoveryPage) {
+  return Math.floor(Math.random() * maxPage) + 1
+}
+
+async function fetchMovieGenres() {
+  const url = buildApiUrl(apiConfig.endpoints.genres)
+  const data = await fetchJson(url)
 
   return Array.isArray(data.genres) ? data.genres : []
 }
 
-async function fetch_movies_by_genre(genre_id) {
-  const data = await request_json(build_api_url(api_config.endpoints.discover_movies, {
-    with_genres: genre_id,
-    page: Math.floor(Math.random() * 3) + 1
-  }))
+async function fetchMoviesByGenre(genreId) {
+  const url = buildApiUrl(apiConfig.endpoints.discoverMovies, {
+    with_genres: genreId,
+    page: pickRandomPage()
+  })
+  const data = await fetchJson(url)
 
   return Array.isArray(data.results) ? data.results : []
 }
 
-function get_movie_image_url(path) {
-  return path ? `${api_config.image_base_url}${path}` : ""
+function getMovieImageUrl(imagePath) {
+  return imagePath ? `${apiConfig.imageBaseUrl}${imagePath}` : ""
 }

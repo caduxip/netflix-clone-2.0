@@ -1,28 +1,28 @@
-function normalize_category_name(category_name) {
-  return category_name.replace(/_/g, " ")
+function formatCategoryName(categoryName) {
+  return categoryName.replace(/_/g, " ")
 }
 
-function create_category_id(category_name) {
-  return category_name.trim().replace(/\s+/g, "_")
+function createCategoryId(categoryName) {
+  return formatCategoryName(categoryName).trim().replace(/\s+/g, "_")
 }
 
-function create_navigation_button(button_class, image_path, alt_text) {
+function createNavigationButton(buttonClass, imagePath, altText) {
   const button = document.createElement("button")
   const image = document.createElement("img")
 
-  button.className = button_class
-  image.src = image_path
-  image.alt = alt_text
+  button.className = buttonClass
+  image.src = imagePath
+  image.alt = altText
 
   button.appendChild(image)
 
   return button
 }
 
-function create_movie_card(movie) {
-  const backdrop_path = movie.backdrop_path || movie.poster_path
+function createMovieCard(movie) {
+  const imagePath = movie.backdrop_path || movie.poster_path
 
-  if (!backdrop_path) {
+  if (!imagePath) {
     return null
   }
 
@@ -31,7 +31,7 @@ function create_movie_card(movie) {
   const title = document.createElement("p")
 
   movie_card.className = "movie"
-  poster.src = get_movie_image_url(backdrop_path)
+  poster.src = getMovieImageUrl(imagePath)
   poster.alt = movie.title || "movie poster"
   title.className = "movie-title"
   title.textContent = movie.title || "Untitled"
@@ -41,44 +41,55 @@ function create_movie_card(movie) {
   return movie_card
 }
 
-function render_movie_cards(movie_container, movies) {
+function renderMovieCards(movieContainer, movies) {
   const fragment = document.createDocumentFragment()
 
   movies.forEach((movie) => {
-    const movie_card = create_movie_card(movie)
+    const movieCard = createMovieCard(movie)
 
-    if (!movie_card) {
+    if (!movieCard) {
       return
     }
 
-    fragment.appendChild(movie_card)
+    fragment.appendChild(movieCard)
   })
 
-  movie_container.appendChild(fragment)
+  movieContainer.appendChild(fragment)
 }
 
-function render_category(main_section, category_name, movies) {
-  const movie_list = document.createElement("div")
+function createCategorySection(categoryName) {
+  const movieList = document.createElement("div")
   const title = document.createElement("h1")
-  const movie_container = document.createElement("div")
+  const movieContainer = document.createElement("div")
 
-  movie_list.className = "movie-list"
+  movieList.className = "movie-list"
   title.className = "movie-category"
-  title.textContent = normalize_category_name(category_name)
-  movie_container.className = "movie-container"
-  movie_container.id = create_category_id(category_name)
+  title.textContent = formatCategoryName(categoryName)
+  movieContainer.className = "movie-container"
+  movieContainer.id = createCategoryId(categoryName)
 
-  movie_list.append(
-    create_navigation_button("pre-btn", "images/prev.png", "previous button"),
+  movieList.append(
+    createNavigationButton("pre-btn", "images/prev.png", "previous button"),
     title,
-    movie_container,
-    create_navigation_button("next-btn", "images/next.png", "next button")
+    movieContainer,
+    createNavigationButton("next-btn", "images/next.png", "next button")
   )
 
-  main_section.appendChild(movie_list)
-  render_movie_cards(movie_container, movies)
+  return {
+    movieList,
+    movieContainer
+  }
 }
 
-function render_categories(main_section, categories) {
-  categories.forEach(({ category_name, movies }) => render_category(main_section, category_name, movies))
+function renderCategory(mainSection, categoryName, movies) {
+  const { movieList, movieContainer } = createCategorySection(categoryName)
+
+  mainSection.appendChild(movieList)
+  renderMovieCards(movieContainer, movies)
+}
+
+function renderCategories(mainSection, categories) {
+  categories.forEach(({ categoryName, movies }) => {
+    renderCategory(mainSection, categoryName, movies)
+  })
 }

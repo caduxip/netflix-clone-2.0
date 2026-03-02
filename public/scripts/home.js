@@ -1,28 +1,40 @@
-const main_section = document.querySelector(".main")
+const mainSection = document.querySelector(".main")
 
-initialize_home_page()
+initializeHomePage()
 
-async function initialize_home_page() {
+async function initializeHomePage() {
+  if (!mainSection) {
+    return
+  }
+
   try {
-    const genres = await fetch_movie_genres()
-    const categories = (await Promise.all(genres.map(load_category))).filter(Boolean)
+    const genres = await fetchMovieGenres()
+    const categories = await loadCategories(genres)
 
-    render_categories(main_section, categories)
+    renderCategories(mainSection, categories)
 
     if (categories.length > 0) {
-      setup_scrooling()
+      setupScrolling()
     }
   } catch (error) {
     console.error("Failed to load homepage data:", error)
   }
 }
 
-async function load_category({ id, name }) {
+async function loadCategories(genres) {
+  const categories = await Promise.all(genres.map(loadCategory))
+
+  return categories.filter(Boolean)
+}
+
+async function loadCategory(genre) {
+  const { id, name } = genre
+
   try {
-    const movies = await fetch_movies_by_genre(id)
+    const movies = await fetchMoviesByGenre(id)
 
     return {
-      category_name: normalize_category_name(name),
+      categoryName: formatCategoryName(name),
       movies
     }
   } catch (error) {

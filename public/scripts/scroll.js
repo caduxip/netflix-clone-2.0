@@ -1,15 +1,26 @@
-function setup_scrooling() {
+function scrollContainerByPage(container, direction) {
+  const containerWidth = container.getBoundingClientRect().width
+
+  container.scrollLeft += containerWidth * direction
+}
+
+function attachScrollButton(button, container, direction) {
+  if (!button) {
+    return
+  }
+
+  button.addEventListener("click", () => {
+    scrollContainerByPage(container, direction)
+  })
+}
+
+function setupScrolling() {
   const containers = document.querySelectorAll(".movie-container")
-  const next_buttons = document.querySelectorAll(".next-btn")
-  const prev_buttons = document.querySelectorAll(".pre-btn")
+  const nextButtons = document.querySelectorAll(".next-btn")
+  const prevButtons = document.querySelectorAll(".pre-btn")
 
   containers.forEach((container, index) => {
-    next_buttons[index]?.addEventListener("click", () => {
-      container.scrollLeft += container.getBoundingClientRect().width
-    })
-
-    prev_buttons[index]?.addEventListener("click", () => {
-      container.scrollLeft -= container.getBoundingClientRect().width
-    })
+    attachScrollButton(nextButtons[index], container, 1)
+    attachScrollButton(prevButtons[index], container, -1)
   })
 }

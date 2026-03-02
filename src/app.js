@@ -3,15 +3,17 @@ import path from "path"
 import { fileURLToPath } from "url"
 import register_home_route from "./routes/home_route.js"
 
-const public_directory_path = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public")
+const currentFilePath = fileURLToPath(import.meta.url)
+const currentDirectory = path.dirname(currentFilePath)
+const publicDirectoryPath = path.join(currentDirectory, "..", "public")
 
-function create_app() {
+function createApp() {
   const app = express()
 
-  app.use(express.static(public_directory_path))
+  app.use(express.static(publicDirectoryPath))
   register_home_route(app)
 
   return app
 }
 
-export default create_app
+export default createApp
