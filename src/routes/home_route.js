@@ -1,6 +1,9 @@
-const path = require("path")
+import path from "path"
+import { fileURLToPath } from "url"
 
-const public_directory_path = path.join(__dirname, "..", "..", "public")
+const current_file_path = fileURLToPath(import.meta.url)
+const current_directory_path = path.dirname(current_file_path)
+const public_directory_path = path.join(current_directory_path, "..", "..", "public")
 const index_file_path = path.join(public_directory_path, "index.html")
 
 function register_home_route(app) {
@@ -9,4 +12,4 @@ function register_home_route(app) {
   })
 }
 
-module.exports = register_home_route
+export default register_home_route

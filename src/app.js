@@ -1,8 +1,11 @@
-const express = require("express")
-const path = require("path")
-const register_home_route = require("./routes/home_route")
+import express from "express"
+import path from "path"
+import { fileURLToPath } from "url"
+import register_home_route from "./routes/home_route.js"
 
-const public_directory_path = path.join(__dirname, "..", "public")
+const current_file_path = fileURLToPath(import.meta.url)
+const current_directory_path = path.dirname(current_file_path)
+const public_directory_path = path.join(current_directory_path, "..", "public")
 
 function configure_static_files(app) {
   app.use(express.static(public_directory_path))
@@ -21,4 +24,4 @@ function create_app() {
   return app
 }
 
-module.exports = create_app
+export default create_app
