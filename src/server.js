@@ -1,12 +1,9 @@
 import create_app from "./app.js"
 
-const default_port = 3333
-const port = Number(process.env.PORT) || default_port
+const port = Number(process.env.PORT) || 3333
 
 function start_server() {
-  const app = create_app()
-
-  app.listen(port, () => {
+  create_app().listen(port, () => {
     console.log(`Server start up on port ${port}!`)
   })
 }

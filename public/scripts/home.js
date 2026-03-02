@@ -5,13 +5,11 @@ initialize_home_page()
 async function initialize_home_page() {
   try {
     const genres = await fetch_movie_genres()
-    const category_requests = genres.map(({ id, name }) => load_category(id, name))
-    const categories = await Promise.all(category_requests)
-    const valid_categories = categories.filter(Boolean)
+    const categories = (await Promise.all(genres.map(load_category))).filter(Boolean)
 
-    render_categories(main_section, valid_categories)
+    render_categories(main_section, categories)
 
-    if (valid_categories.length > 0) {
+    if (categories.length > 0) {
       setup_scrooling()
     }
   } catch (error) {
@@ -19,9 +17,10 @@ async function initialize_home_page() {
   }
 }
 
-async function load_category(id, name) {
+async function load_category({ id, name }) {
   try {
     const movies = await fetch_movies_by_genre(id)
+
     return {
       category_name: normalize_category_name(name),
       movies
