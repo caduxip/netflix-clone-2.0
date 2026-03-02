@@ -1,7 +1,9 @@
 import AppFactory from "./app.js"
 
+const DEFAULT_SERVER_PORT = 3333
+
 class Server {
-  constructor(port = Number(process.env.PORT) || 3333) {
+  constructor(port = Number(process.env.PORT) || DEFAULT_SERVER_PORT) {
     this.port = port
     this.appFactory = new AppFactory()
   }

@@ -1,3 +1,6 @@
+const NEXT_PAGE_DIRECTION = 1
+const PREVIOUS_PAGE_DIRECTION = -1
+
 class MovieScroller {
   attachScrollButton(button, container, direction) {
     if (!button) {
@@ -17,8 +20,8 @@ class MovieScroller {
     const prevButtons = document.querySelectorAll(".pre-btn")
 
     containers.forEach((container, index) => {
-      this.attachScrollButton(nextButtons[index], container, 1)
-      this.attachScrollButton(prevButtons[index], container, -1)
+      this.attachScrollButton(nextButtons[index], container, NEXT_PAGE_DIRECTION)
+      this.attachScrollButton(prevButtons[index], container, PREVIOUS_PAGE_DIRECTION)
     })
   }
 }

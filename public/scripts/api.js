@@ -1,3 +1,5 @@
+const DISCOVERY_PAGE_COUNT = 3
+
 class MovieApi {
   constructor(config) {
     this.config = Object.freeze(config)
@@ -27,10 +29,14 @@ class MovieApi {
     return Array.isArray(data.genres) ? data.genres : []
   }
 
+  getRandomDiscoveryPage() {
+    return Math.floor(Math.random() * DISCOVERY_PAGE_COUNT) + 1
+  }
+
   async fetchMoviesByGenre(genreId) {
     const url = this.buildApiUrl(this.config.endpoints.discoverMovies, {
       with_genres: genreId,
-      page: Math.floor(Math.random() * 3) + 1
+      page: this.getRandomDiscoveryPage()
     })
     const data = await this.fetchJson(url)
 

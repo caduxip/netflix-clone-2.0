@@ -1,14 +1,37 @@
+const CATEGORY_SEPARATOR_PATTERN = /_/g
+const CATEGORY_ID_SPACING_PATTERN = /\s+/g
+const EMPTY_IMAGE_PATH = ""
+const DEFAULT_MOVIE_TITLE = "Untitled"
+const DEFAULT_MOVIE_POSTER_ALT = "movie poster"
+const movieListClassName = "movie-list"
+const movieCategoryClassName = "movie-category"
+const movieContainerClassName = "movie-container"
+const movieCardClassName = "movie"
+const movieTitleClassName = "movie-title"
+const navigationButtons = Object.freeze({
+  previous: {
+    className: "pre-btn",
+    imagePath: "images/prev.png",
+    altText: "previous button"
+  },
+  next: {
+    className: "next-btn",
+    imagePath: "images/next.png",
+    altText: "next button"
+  }
+})
+
 class MovieRenderer {
   constructor(apiService) {
     this.apiService = apiService
   }
 
   formatCategoryName(categoryName) {
-    return categoryName.replace(/_/g, " ")
+    return categoryName.replace(CATEGORY_SEPARATOR_PATTERN, " ")
   }
 
   createCategoryId(categoryName) {
-    return this.formatCategoryName(categoryName).trim().replace(/\s+/g, "_")
+    return this.formatCategoryName(categoryName).trim().replace(CATEGORY_ID_SPACING_PATTERN, "_")
   }
 
   createNavigationButton(buttonClass, imagePath, altText) {
@@ -24,8 +47,12 @@ class MovieRenderer {
     return button
   }
 
+  resolveMovieImagePath(movie) {
+    return movie.backdrop_path || movie.poster_path || EMPTY_IMAGE_PATH
+  }
+
   createMovieCard(movie) {
-    const imagePath = movie.backdrop_path || movie.poster_path
+    const imagePath = this.resolveMovieImagePath(movie)
 
     if (!imagePath) {
       return null
@@ -35,11 +62,11 @@ class MovieRenderer {
     const poster = document.createElement("img")
     const title = document.createElement("p")
 
-    movieCard.className = "movie"
+    movieCard.className = movieCardClassName
     poster.src = this.apiService.getMovieImageUrl(imagePath)
-    poster.alt = movie.title || "movie poster"
-    title.className = "movie-title"
-    title.textContent = movie.title || "Untitled"
+    poster.alt = movie.title || DEFAULT_MOVIE_POSTER_ALT
+    title.className = movieTitleClassName
+    title.textContent = movie.title || DEFAULT_MOVIE_TITLE
 
     movieCard.append(poster, title)
 
@@ -67,17 +94,25 @@ class MovieRenderer {
     const title = document.createElement("h1")
     const movieContainer = document.createElement("div")
 
-    movieList.className = "movie-list"
-    title.className = "movie-category"
+    movieList.className = movieListClassName
+    title.className = movieCategoryClassName
     title.textContent = this.formatCategoryName(categoryName)
-    movieContainer.className = "movie-container"
+    movieContainer.className = movieContainerClassName
     movieContainer.id = this.createCategoryId(categoryName)
 
     movieList.append(
-      this.createNavigationButton("pre-btn", "images/prev.png", "previous button"),
+      this.createNavigationButton(
+        navigationButtons.previous.className,
+        navigationButtons.previous.imagePath,
+        navigationButtons.previous.altText
+      ),
       title,
       movieContainer,
-      this.createNavigationButton("next-btn", "images/next.png", "next button")
+      this.createNavigationButton(
+        navigationButtons.next.className,
+        navigationButtons.next.imagePath,
+        navigationButtons.next.altText
+      )
     )
 
     mainSection.appendChild(movieList)

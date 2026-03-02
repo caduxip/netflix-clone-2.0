@@ -3,8 +3,12 @@ import { publicDirectoryPath } from "./config/paths.js"
 import HomeRoute from "./routes/home_route.js"
 
 class AppFactory {
+  createExpressApp() {
+    return express()
+  }
+
   create() {
-    const app = express()
+    const app = this.createExpressApp()
 
     app.use(express.static(publicDirectoryPath))
     new HomeRoute().register(app)
