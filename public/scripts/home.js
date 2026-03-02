@@ -1,88 +1,101 @@
-const main = document.querySelector(".main")
+const main_section = document.querySelector(".main");
 
-fetchGenresList()
+initializeHomePage();
 
-function fetchGenresList() {
-  const url = genres_list_http + new URLSearchParams({
-    api_key: api_key
-  })
+async function initializeHomePage() {
+  try {
+    const genres = await fetchMovieGenres();
+    const category_requests = genres.map(({ id, name }) => loadCategory(id, name));
+    const categories = await Promise.all(category_requests);
+    const valid_categories = categories.filter(Boolean);
 
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      data.genres.forEach(item => {
-        fetchMoviesListByGenres(item.id, item.name)
+    valid_categories.forEach(({ categoryName, movies }) => {
+        renderCategory(categoryName, movies);
       });
-    })
-    .catch(err => console.log(err))
+
+    if (valid_categories.length > 0) {
+      setup_scrooling();
+    }
+  } catch (error) {
+    console.error("Failed to load homepage data:", error);
+  }
 }
 
-const fetchMoviesListByGenres = (id, genres) => {
-  const url = movie_genres_http + new URLSearchParams({
-    api_key: api_key,
-    with_genres: id,
-    page: Math.floor(Math.random() * 3) + 1
-  })
-
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      const category = genres.replace("_", " ")
-      makeCategoryElement(category, data.results)
-    })
-    .catch(err => console.log(err))
+async function loadCategory(id, name) {
+  try {
+    const movies = await fetchMoviesByGenre(id);
+    return {
+      categoryName: name.replace(/_/g, " "),
+      movies
+    };
+  } catch (error) {
+    console.error(`Failed to load movies for genre "${name}":`, error);
+    return null;
+  }
 }
 
-const makeCategoryElement = (category, data) => {
-  const categoryHTML = `
-  <div class="movie-list">
+function renderCategory(categoryName, movies) {
+  const movie_list = document.createElement("div");
+  movie_list.className = "movie-list";
 
-    <button class="pre-btn">
-      <img src="images/prev.png" alt="previous button">
-    </button>
+  const previous_button = createNavButton("pre-btn", "images/prev.png", "previous button");
+  const title = document.createElement("h1");
+  title.className = "movie-category";
+  title.textContent = categoryName;
 
-    <h1 class="movie-category">${category.replace("_", " ")}</h1>
-    
-    <div class="movie-container" id="${category}">
+  const movie_container = document.createElement("div");
+  movie_container.className = "movie-container";
+  movie_container.id = createCategoryId(categoryName);
 
-    </div>
+  const next_button = createNavButton("next-btn", "images/next.png", "next button");
 
-    <button class="next-btn">
-      <img src="images/next.png" alt="next button">
-    </button>
+  movie_list.append(previous_button, title, movie_container, next_button);
+  main_section.appendChild(movie_list);
 
-  </div>
-  
-  `
-  main.innerHTML += categoryHTML
-  makeCards(category, data)
+  renderMovieCards(movie_container, movies);
 }
 
-const makeCards = (category, data) => {
-  const movieContainer = document.getElementById(category.replace(" ", "_"));
+function createNavButton(buttonClass, imagePath, altText) {
+  const button = document.createElement("button");
+  button.className = buttonClass;
 
-  data.forEach((item, index) => {
-    if (!item.backdrop_path) {
-      item.backdrop_path = item.poster_path
+  const image = document.createElement("img");
+  image.src = imagePath;
+  image.alt = altText;
 
-      if (!item.backdrop_path) {
-        return
-      }
+  button.appendChild(image);
+
+  return button;
+}
+
+function renderMovieCards(movieContainer, movies) {
+  const fragment = document.createDocumentFragment();
+
+  movies.forEach((movie) => {
+    const backdrop_path = movie.backdrop_path || movie.poster_path;
+
+    if (!backdrop_path) {
+      return;
     }
 
-    const movieHTML = `
-    <div class="movie">
-      <img src="${img_url}${item.backdrop_path}" alt="poster">
-      <p class="movie-title">${item.title}</p>
-    </div>
-    `
-    movieContainer.innerHTML += movieHTML
+    const movie_card = document.createElement("div");
+    movie_card.className = "movie";
 
-    if (index == data.length - 1) {
-      setTimeout(() => {
-        setupScrooling()
-      }, 100)
-    }
+    const poster = document.createElement("img");
+    poster.src = getMovieImageUrl(backdrop_path);
+    poster.alt = movie.title || "movie poster";
 
-  })
+    const title = document.createElement("p");
+    title.className = "movie-title";
+    title.textContent = movie.title || "Untitled";
+
+    movie_card.append(poster, title);
+    fragment.appendChild(movie_card);
+  });
+
+  movieContainer.appendChild(fragment);
+}
+
+function createCategoryId(categoryName) {
+  return categoryName.trim().replace(/\s+/g, "_");
 }

@@ -1,20 +1,20 @@
-const setupScrooling= () =>{
+const setup_scrooling = () => {
   const container = [...document.querySelectorAll(".movie-container")]
 
-  const nextBtn = [...document.querySelectorAll(".next-btn")]
-  const prevBtn = [...document.querySelectorAll(".pre-btn")]
+  const next_btn = [...document.querySelectorAll(".next-btn")]
+  const prev_btn = [...document.querySelectorAll(".pre-btn")]
 
 
   container.forEach((item, i)=>{
-    let containerDimensions = item.getBoundingClientRect()
-    let containerWidth = containerDimensions.width
+    let container_dimensions = item.getBoundingClientRect()
+    let container_width = container_dimensions.width
 
-    nextBtn[i].addEventListener('click', ()=>{
-      item.scrollLeft += containerWidth
+    next_btn[i].addEventListener('click', ()=>{
+      item.scrollLeft += container_width
     })
 
-    prevBtn[i].addEventListener('click', ()=>{
-      item.scrollLeft -= containerWidth
+    prev_btn[i].addEventListener('click', ()=>{
+      item.scrollLeft -= container_width
     })
 
   })
