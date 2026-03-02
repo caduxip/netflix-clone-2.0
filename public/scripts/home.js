@@ -42,11 +42,4 @@ class HomePage {
   }
 }
 
-const homePage = new HomePage(
-  document.querySelector(".main"),
-  movieApi,
-  movieRenderer,
-  movieScroller
-)
-
-homePage.initialize()
+export { HomePage }

@@ -1,10 +1,4 @@
-import path from "path"
-import { fileURLToPath } from "url"
-
-const currentFilePath = fileURLToPath(import.meta.url)
-const currentDirectory = path.dirname(currentFilePath)
-const publicDirectoryPath = path.join(currentDirectory, "..", "..", "public")
-const indexFilePath = path.join(publicDirectoryPath, "index.html")
+import { indexFilePath } from "../config/paths.js"
 
 class HomeRoute {
   register(app) {

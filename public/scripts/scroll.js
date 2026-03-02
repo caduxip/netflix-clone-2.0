@@ -23,4 +23,4 @@ class MovieScroller {
   }
 }
 
-const movieScroller = new MovieScroller()
+export { MovieScroller }

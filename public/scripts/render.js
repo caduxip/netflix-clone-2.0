@@ -91,4 +91,4 @@ class MovieRenderer {
   }
 }
 
-const movieRenderer = new MovieRenderer(movieApi)
+export { MovieRenderer }
