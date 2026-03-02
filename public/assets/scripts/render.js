@@ -11,12 +11,12 @@ const movieTitleClassName = "movie-title"
 const navigationButtons = Object.freeze({
   previous: {
     className: "pre-btn",
-    imagePath: "images/prev.png",
+    imagePath: "assets/images/prev.png",
     altText: "previous button"
   },
   next: {
     className: "next-btn",
-    imagePath: "images/next.png",
+    imagePath: "assets/images/next.png",
     altText: "next button"
   }
 })
