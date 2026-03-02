@@ -62,7 +62,7 @@ class MovieRenderer {
     movieContainer.appendChild(fragment)
   }
 
-  createCategorySection(categoryName) {
+  renderCategory(mainSection, categoryName, movies) {
     const movieList = document.createElement("div")
     const title = document.createElement("h1")
     const movieContainer = document.createElement("div")
@@ -79,15 +79,6 @@ class MovieRenderer {
       movieContainer,
       this.createNavigationButton("next-btn", "images/next.png", "next button")
     )
-
-    return {
-      movieList,
-      movieContainer
-    }
-  }
-
-  renderCategory(mainSection, categoryName, movies) {
-    const { movieList, movieContainer } = this.createCategorySection(categoryName)
 
     mainSection.appendChild(movieList)
     this.renderMovieCards(movieContainer, movies)

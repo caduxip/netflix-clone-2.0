@@ -1,17 +1,13 @@
 class MovieScroller {
-  scrollContainerByPage(container, direction) {
-    const containerWidth = container.getBoundingClientRect().width
-
-    container.scrollLeft += containerWidth * direction
-  }
-
   attachScrollButton(button, container, direction) {
     if (!button) {
       return
     }
 
     button.addEventListener("click", () => {
-      this.scrollContainerByPage(container, direction)
+      const containerWidth = container.getBoundingClientRect().width
+
+      container.scrollLeft += containerWidth * direction
     })
   }
 

@@ -13,7 +13,7 @@ class HomePage {
 
     try {
       const genres = await this.apiService.fetchMovieGenres()
-      const categories = await this.loadCategories(genres)
+      const categories = (await Promise.all(genres.map((genre) => this.loadCategory(genre)))).filter(Boolean)
 
       this.renderer.renderCategories(this.mainSection, categories)
 
@@ -23,12 +23,6 @@ class HomePage {
     } catch (error) {
       console.error("Failed to load homepage data:", error)
     }
-  }
-
-  async loadCategories(genres) {
-    const categories = await Promise.all(genres.map((genre) => this.loadCategory(genre)))
-
-    return categories.filter(Boolean)
   }
 
   async loadCategory(genre) {

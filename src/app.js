@@ -3,20 +3,16 @@ import path from "path"
 import { fileURLToPath } from "url"
 import HomeRoute from "./routes/home_route.js"
 
+const currentFilePath = fileURLToPath(import.meta.url)
+const currentDirectory = path.dirname(currentFilePath)
+const publicDirectoryPath = path.join(currentDirectory, "..", "public")
+
 class AppFactory {
-  constructor() {
-    const currentFilePath = fileURLToPath(import.meta.url)
-    const currentDirectory = path.dirname(currentFilePath)
-
-    this.publicDirectoryPath = path.join(currentDirectory, "..", "public")
-    this.homeRoute = new HomeRoute()
-  }
-
   create() {
     const app = express()
 
-    app.use(express.static(this.publicDirectoryPath))
-    this.homeRoute.register(app)
+    app.use(express.static(publicDirectoryPath))
+    new HomeRoute().register(app)
 
     return app
   }

@@ -1,7 +1,6 @@
 class MovieApi {
   constructor(config) {
     this.config = Object.freeze(config)
-    this.maxDiscoveryPage = 3
   }
 
   buildApiUrl(baseUrl, params = {}) {
@@ -21,10 +20,6 @@ class MovieApi {
     return response.json()
   }
 
-  pickRandomPage(maxPage = this.maxDiscoveryPage) {
-    return Math.floor(Math.random() * maxPage) + 1
-  }
-
   async fetchMovieGenres() {
     const url = this.buildApiUrl(this.config.endpoints.genres)
     const data = await this.fetchJson(url)
@@ -35,7 +30,7 @@ class MovieApi {
   async fetchMoviesByGenre(genreId) {
     const url = this.buildApiUrl(this.config.endpoints.discoverMovies, {
       with_genres: genreId,
-      page: this.pickRandomPage()
+      page: Math.floor(Math.random() * 3) + 1
     })
     const data = await this.fetchJson(url)
 
