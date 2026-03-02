@@ -1,44 +1,58 @@
-const mainSection = document.querySelector(".main")
-
-initializeHomePage()
-
-async function initializeHomePage() {
-  if (!mainSection) {
-    return
+class HomePage {
+  constructor(mainSection, apiService, renderer, scroller) {
+    this.mainSection = mainSection
+    this.apiService = apiService
+    this.renderer = renderer
+    this.scroller = scroller
   }
 
-  try {
-    const genres = await fetchMovieGenres()
-    const categories = await loadCategories(genres)
-
-    renderCategories(mainSection, categories)
-
-    if (categories.length > 0) {
-      setupScrolling()
+  async initialize() {
+    if (!this.mainSection) {
+      return
     }
-  } catch (error) {
-    console.error("Failed to load homepage data:", error)
-  }
-}
 
-async function loadCategories(genres) {
-  const categories = await Promise.all(genres.map(loadCategory))
+    try {
+      const genres = await this.apiService.fetchMovieGenres()
+      const categories = await this.loadCategories(genres)
 
-  return categories.filter(Boolean)
-}
+      this.renderer.renderCategories(this.mainSection, categories)
 
-async function loadCategory(genre) {
-  const { id, name } = genre
-
-  try {
-    const movies = await fetchMoviesByGenre(id)
-
-    return {
-      categoryName: formatCategoryName(name),
-      movies
+      if (categories.length > 0) {
+        this.scroller.setup()
+      }
+    } catch (error) {
+      console.error("Failed to load homepage data:", error)
     }
-  } catch (error) {
-    console.error(`Failed to load movies for genre "${name}":`, error)
-    return null
+  }
+
+  async loadCategories(genres) {
+    const categories = await Promise.all(genres.map((genre) => this.loadCategory(genre)))
+
+    return categories.filter(Boolean)
+  }
+
+  async loadCategory(genre) {
+    const { id, name } = genre
+
+    try {
+      const movies = await this.apiService.fetchMoviesByGenre(id)
+
+      return {
+        categoryName: this.renderer.formatCategoryName(name),
+        movies
+      }
+    } catch (error) {
+      console.error(`Failed to load movies for genre "${name}":`, error)
+      return null
+    }
   }
 }
+
+const homePage = new HomePage(
+  document.querySelector(".main"),
+  movieApi,
+  movieRenderer,
+  movieScroller
+)
+
+homePage.initialize()

@@ -1,11 +1,16 @@
-import createApp from "./app.js"
+import AppFactory from "./app.js"
 
-const serverPort = Number(process.env.PORT) || 3333
+class Server {
+  constructor(port = Number(process.env.PORT) || 3333) {
+    this.port = port
+    this.appFactory = new AppFactory()
+  }
 
-function startServer() {
-  createApp().listen(serverPort, () => {
-    console.log(`Server started on port ${serverPort}`)
-  })
+  start() {
+    this.appFactory.create().listen(this.port, () => {
+      console.log(`Server started on port ${this.port}`)
+    })
+  }
 }
 
-startServer()
+new Server().start()

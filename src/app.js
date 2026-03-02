@@ -1,19 +1,25 @@
 import express from "express"
 import path from "path"
 import { fileURLToPath } from "url"
-import register_home_route from "./routes/home_route.js"
+import HomeRoute from "./routes/home_route.js"
 
-const currentFilePath = fileURLToPath(import.meta.url)
-const currentDirectory = path.dirname(currentFilePath)
-const publicDirectoryPath = path.join(currentDirectory, "..", "public")
+class AppFactory {
+  constructor() {
+    const currentFilePath = fileURLToPath(import.meta.url)
+    const currentDirectory = path.dirname(currentFilePath)
 
-function createApp() {
-  const app = express()
+    this.publicDirectoryPath = path.join(currentDirectory, "..", "public")
+    this.homeRoute = new HomeRoute()
+  }
 
-  app.use(express.static(publicDirectoryPath))
-  register_home_route(app)
+  create() {
+    const app = express()
 
-  return app
+    app.use(express.static(this.publicDirectoryPath))
+    this.homeRoute.register(app)
+
+    return app
+  }
 }
 
-export default createApp
+export default AppFactory
